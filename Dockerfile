@@ -1,22 +1,22 @@
-FROM node:20-alpine
+FROM node:20-alpine AS deps
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+RUN npm ci --only=production && \
+    npm cache clean --force
 
-# Copy application files
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+
 COPY . .
 
-# Expose port
-EXPOSE 3002
+EXPOSE 3010
 
-# Set environment to production
 ENV NODE_ENV=production
 
-# Start the application
 CMD ["node", "index.js"]
