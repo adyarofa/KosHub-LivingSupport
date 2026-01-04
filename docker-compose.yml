@@ -3,7 +3,7 @@ services:
     build: .
     container_name: koshub-living-support
     ports:
-      - "3002:3002"
+      - "3010:3010"
     environment:
       - PORT=3002
       - DATABASE_URL=${DATABASE_URL}
