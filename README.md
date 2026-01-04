@@ -9,20 +9,6 @@
 
 ---
 
-## 📋 Daftar Isi
-
-- [Fitur Utama](#-fitur-utama)
-- [Teknologi](#-teknologi)
-- [Prerequisites](#-prerequisites)
-- [Instalasi & Setup](#-instalasi--setup)
-- [API Documentation](#-api-documentation)
-- [Deployment dengan Docker](#-deployment-dengan-docker)
-- [Environment Variables](#-environment-variables)
-- [Database Schema](#-database-schema)
-- [Testing API](#-testing-api)
-
----
-
 ## Fitur Utama
 
 ### 1. **Laundry Service** 
@@ -50,7 +36,7 @@
 
 ---
 
-## 🛠 Teknologi
+## Teknologi
 
 - **Runtime**: Node.js 20.x
 - **Framework**: Express.js 5.x
@@ -61,20 +47,12 @@
 
 ---
 
-## 📦 Prerequisites
+## Prerequisites
 
 **Pilihan 1: Supabase (Recommended for Production)** 
 - [Node.js](https://nodejs.org/) (v20 atau lebih baru)
 - [Supabase Account](https://supabase.com) (Gratis!)
 - [Git](https://git-scm.com/)
-
-**Pilihan 2: Local Development** 💻
-- [Node.js](https://nodejs.org/) (v20 atau lebih baru)
-- [PostgreSQL](https://www.postgresql.org/) (v16 atau lebih baru)
-- [Docker](https://www.docker.com/) & Docker Compose (untuk deployment)
-- [Git](https://git-scm.com/)
-
-> 📘 **Lihat [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) untuk panduan lengkap setup Supabase**
 
 ---
 
@@ -108,83 +86,6 @@ npm start
 2. Settings → Database → Copy **Connection String (URI)**
 3. Settings → API → Copy **JWT Secret**
 4. Done
-
----
-
-### Setup dengan PostgreSQL Local 
-
-<details>
-<summary>Klik untuk lihat panduan lengkap</summary>
-
-### 1. Clone Repository
-
-\`\`\`bash
-git clone https://github.com/adyarofa/KosHub-LivingSupport.git
-cd KosHub-LivingSupport
-\`\`\`
-
-### 2. Install Dependencies
-
-\`\`\`bash
-npm install
-\`\`\`
-
-### 3. Setup Database
-
-**a. Buat database PostgreSQL:**
-
-\`\`\`bash
-# Login ke PostgreSQL
-psql -U postgres
-
-# Buat database
-CREATE DATABASE koshub_living_support;
-
-# Keluar
-\\q
-\`\`\`
-
-**b. Import schema:**
-
-\`\`\`bash
-psql -U postgres -d koshub_living_support -f db/schema.sql
-\`\`\`
-
-### 4. Setup Environment Variables
-
-Copy file `.env.example` menjadi `.env`:
-
-\`\`\`bash
-cp .env.example .env
-\`\`\`
-
-Edit file `.env` sesuai konfigurasi Anda:
-
-\`\`\`env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=your_password_here
-DB_NAME=koshub_living_support
-JWT_SECRET=same_secret_as_accommodation_service
-ACCOMMODATION_SERVICE_URL=http://localhost:3001
-\`\`\`
-
-**PENTING**: Gunakan `JWT_SECRET` yang **SAMA** dengan microservice Accommodation!
-
-### 5. Jalankan Service
-
-\`\`\`bash
-# Development mode (dengan auto-reload)
-npm run dev
-
-# Production mode
-npm start
-\`\`\`
-
-Service akan berjalan di: **http://localhost:3002**
-
-</details>
 
 ---
 
