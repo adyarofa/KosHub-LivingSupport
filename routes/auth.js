@@ -11,7 +11,7 @@ const supabase = createClient(
 );
 
 // POST /auth/login - Login user
-// User harus sudah register via Accommodation Service (Wijak)
+// User harus sudah register via Accommodation Service 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
