@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: koshub-living-support-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: koshub_living_support
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - koshub-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Living Support Service
+  app:
+    build: .
+    container_name: koshub-living-support-service
+    environment:
+      PORT: 3002
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres123
+      DB_NAME: koshub_living_support
+      JWT_SECRET: your_jwt_secret_key_change_this_in_production
+      ACCOMMODATION_SERVICE_URL: http://host.docker.internal:3001
+      NODE_ENV: production
+    ports:
+      - "3002:3002"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - koshub-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  koshub-network:
+    driver: bridge

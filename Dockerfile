@@ -1,13 +1,22 @@
-FROM php:8.2-cli
+FROM node:20-alpine
 
+# Set working directory
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y unzip git && rm -rf /var/lib/apt/lists/*
+# Copy package files
+COPY package*.json ./
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Install dependencies
+RUN npm ci --only=production
 
-COPY . /app
-RUN composer install --no-dev --optimize-autoloader
+# Copy application files
+COPY . .
 
-EXPOSE 8080
-CMD ["php", "-S", "0.0.0.0:8080", "-t", "public"]
+# Expose port
+EXPOSE 3002
+
+# Set environment to production
+ENV NODE_ENV=production
+
+# Start the application
+CMD ["node", "index.js"]

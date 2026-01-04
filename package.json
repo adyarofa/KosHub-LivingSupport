@@ -1,0 +1,39 @@
+{
+  "name": "koshub-livingsupport",
+  "version": "1.0.0",
+  "description": "KosHub Living Support Microservice - Laundry, Catering, and Notification Services",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adyarofa/KosHub-LivingSupport.git"
+  },
+  "keywords": [
+    "microservice",
+    "laundry",
+    "catering",
+    "notifications",
+    "koshub"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adyarofa/KosHub-LivingSupport/issues"
+  },
+  "homepage": "https://github.com/adyarofa/KosHub-LivingSupport#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.89.0",
+    "axios": "^1.13.2",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.16.3"
+  }
+}
