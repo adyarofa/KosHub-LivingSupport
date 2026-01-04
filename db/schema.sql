@@ -3,7 +3,7 @@
 -- Laundry Services Table
 CREATE TABLE IF NOT EXISTS laundry_services (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id UUID NOT NULL,
     booking_id INTEGER NOT NULL,
     service_type VARCHAR(50) NOT NULL CHECK (service_type IN ('wash', 'wash_iron', 'dry_clean', 'iron_only')),
     weight DECIMAL(5,2) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS laundry_services (
 -- Catering Orders Table
 CREATE TABLE IF NOT EXISTS catering_orders (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id UUID NOT NULL,
     booking_id INTEGER NOT NULL,
     meal_type VARCHAR(20) NOT NULL CHECK (meal_type IN ('breakfast', 'lunch', 'dinner', 'snack')),
     menu_name VARCHAR(100) NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS catering_orders (
 -- Notifications Table
 CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
+    user_id UUID NOT NULL,
     service_type VARCHAR(20) NOT NULL CHECK (service_type IN ('laundry', 'catering')),
     service_id INTEGER NOT NULL,
     title VARCHAR(255) NOT NULL,
