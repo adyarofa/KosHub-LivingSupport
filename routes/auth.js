@@ -4,14 +4,11 @@ import { config } from '../env.js';
 
 const router = express.Router();
 
-// Connect ke Supabase A (Wijak) untuk authentication
 const supabase = createClient(
-  config.supabase.url,    // Supabase A (Wijak)
+  config.supabase.url,   
   config.supabase.anonKey
 );
 
-// POST /auth/login - Login user
-// User harus sudah register via Accommodation Service 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -37,7 +34,6 @@ router.post('/login', async (req, res) => {
   });
 });
 
-// GET /auth/me - Get current user info (untuk testing)
 router.get('/me', async (req, res) => {
   const authHeader = req.headers.authorization;
   

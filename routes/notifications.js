@@ -3,7 +3,6 @@ import pool from '../db/pool.js';
 
 const router = express.Router();
 
-// GET /notifications 
 router.get('/', async (req, res) => {
   try {
     const userId = req.user.id;
@@ -28,7 +27,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /notifications/unread-count
 router.get('/unread-count', async (req, res) => {
   try {
     const userId = req.user.id;
@@ -43,7 +41,6 @@ router.get('/unread-count', async (req, res) => {
   }
 });
 
-// GET /notifications/:id 
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -65,7 +62,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// PUT /notifications/:id/read 
 router.put('/:id/read', async (req, res) => {
   try {
     const { id } = req.params;
@@ -87,7 +83,6 @@ router.put('/:id/read', async (req, res) => {
   }
 });
 
-// PUT /notifications/read-all
 router.put('/read-all', async (req, res) => {
   try {
     const userId = req.user.id;
@@ -107,7 +102,6 @@ router.put('/read-all', async (req, res) => {
   }
 });
 
-// DELETE /notifications/:id 
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -129,7 +123,6 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// DELETE /notifications 
 router.delete('/', async (req, res) => {
   try {
     const userId = req.user.id;

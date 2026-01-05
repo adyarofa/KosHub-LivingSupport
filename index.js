@@ -4,7 +4,6 @@ import pool from './db/pool.js';
 
 const port = config.port;
 
-// Test database connection
 pool.query('SELECT NOW()', (err, res) => {
   if (err) {
     console.error('Failed to connect to database:', err.message);
@@ -43,7 +42,6 @@ app.listen(port, () => {
   console.log('Laundry & Catering require active booking');
 });
 
-// Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal received: closing HTTP server');
   pool.end(() => {

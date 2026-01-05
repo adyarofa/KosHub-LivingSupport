@@ -23,7 +23,6 @@ export const createNotification = async (
   }
 };
 
-// Get notification by ID
 export const getNotificationById = async (notificationId, userId) => {
   try {
     const result = await pool.query(
@@ -37,7 +36,6 @@ export const getNotificationById = async (notificationId, userId) => {
   }
 };
 
-// Mark notification as read
 export const markAsRead = async (notificationId, userId) => {
   try {
     const result = await pool.query(
@@ -51,7 +49,6 @@ export const markAsRead = async (notificationId, userId) => {
   }
 };
 
-// Get unread count
 export const getUnreadCount = async (userId) => {
   try {
     const result = await pool.query(

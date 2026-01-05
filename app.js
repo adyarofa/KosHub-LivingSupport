@@ -10,12 +10,10 @@ import { config } from './env.js';
 
 const app = express();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check endpoint (public)
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
@@ -24,7 +22,6 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Public routes info (public)
 app.get('/', (req, res) => {
   res.json({
     message: 'Welcome to KosHub Living Support API',
@@ -41,13 +38,8 @@ app.get('/', (req, res) => {
   });
 });
 
-// Auth routes (public) - untuk login/register
 app.use('/auth', authRoutes);
-
-// Protected routes - require authentication only
 app.use('/api/notifications', authenticateToken, notificationRoutes);
-
-// Public menu endpoint hanya perlu auth, tidak perlu active booking
 app.get('/api/catering/menu', authenticateToken, (req, res) => {
   try {
     res.json({
@@ -60,18 +52,15 @@ app.get('/api/catering/menu', authenticateToken, (req, res) => {
   }
 });
 
-// Protected routes - require authentication only
 app.use('/api/notifications', authenticateToken, notificationRoutes);
-
-// Protected routes - require authentication AND active booking
 app.use('/api/laundry', authenticateAndCheckBooking, laundryRoutes);
 app.use('/api/catering', authenticateAndCheckBooking, cateringRoutes);
-// 404 handler
+
 app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });
 });
 
-// Error handler
+
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.status(500).json({ 

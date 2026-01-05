@@ -31,7 +31,6 @@ export const CATERING_MENU = {
   ]
 };
 
-// GET /catering - Get all catering orders for logged in user
 router.get('/', async (req, res) => {
   try {
     const userId = req.user.id;
@@ -294,7 +293,6 @@ router.delete('/:id', async (req, res) => {
       ['cancelled', id, userId]
     );
 
-    // Create notification
     await createNotification(
       userId,
       'catering',

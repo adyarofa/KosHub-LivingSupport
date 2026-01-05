@@ -4,15 +4,13 @@ import { createNotification } from '../services/notifications.js';
 
 const router = express.Router();
 
-// Price mapping untuk layanan laundry (Rupiah per kg)
 const LAUNDRY_PRICES = {
-  wash: 5000,              // Cuci saja - Rp 5.000/kg
-  wash_iron: 7000,         // Cuci + Setrika - Rp 7.000/kg
-  dry_clean: 15000,        // Dry Clean - Rp 15.000/kg
-  iron_only: 3000          // Setrika saja - Rp 3.000/kg
+  wash: 5000,        
+  wash_iron: 7000,        
+  dry_clean: 15000,
+  iron_only: 3000      
 };
 
-// GET /laundry - Get all laundry services for logged in user
 router.get('/', async (req, res) => {
   try {
     const userId = req.user.id;
@@ -27,7 +25,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /laundry/:id - Get specific laundry service
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -49,7 +46,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /laundry - Create new laundry service request
 router.post('/', async (req, res) => {
   try {
     const userId = req.user.id;
@@ -72,7 +68,6 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Weight must be greater than 0' });
     }
 
-    // Calculate price
     const total_price = LAUNDRY_PRICES[service_type] * weight;
 
     const result = await pool.query(
@@ -85,7 +80,6 @@ router.post('/', async (req, res) => {
 
     const laundryService = result.rows[0];
 
-    // Create notification
     await createNotification(
       userId,
       'laundry',
@@ -102,14 +96,12 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT /laundry/:id - Update laundry service
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
     const { pickup_date, pickup_time, notes } = req.body;
 
-    // Check if laundry service exists and belongs to user
     const checkResult = await pool.query(
       'SELECT * FROM laundry_services WHERE id = $1 AND user_id = $2',
       [id, userId]
@@ -121,7 +113,6 @@ router.put('/:id', async (req, res) => {
 
     const currentService = checkResult.rows[0];
 
-    // Only allow updates if status is pending
     if (currentService.status !== 'pending') {
       return res.status(400).json({ 
         error: 'Can only update laundry service with pending status' 
@@ -138,7 +129,6 @@ router.put('/:id', async (req, res) => {
       [pickup_date, pickup_time, notes, id, userId]
     );
 
-    // Create notification
     await createNotification(
       userId,
       'laundry',
@@ -155,7 +145,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// PUT /laundry/:id/status - Update laundry status (for admin/system)
 router.put('/:id/status', async (req, res) => {
   try {
     const { id } = req.params;
@@ -181,7 +170,6 @@ router.put('/:id/status', async (req, res) => {
       return res.status(404).json({ error: 'Laundry service not found' });
     }
 
-    // Create notification based on status
     const statusMessages = {
       picked_up: 'Your laundry has been picked up',
       in_progress: 'Your laundry is being processed',
@@ -208,13 +196,11 @@ router.put('/:id/status', async (req, res) => {
   }
 });
 
-// DELETE /laundry/:id - Cancel laundry service
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
 
-    // Check if exists and is pending
     const checkResult = await pool.query(
       'SELECT * FROM laundry_services WHERE id = $1 AND user_id = $2',
       [id, userId]
@@ -235,7 +221,6 @@ router.delete('/:id', async (req, res) => {
       ['cancelled', id, userId]
     );
 
-    // Create notification
     await createNotification(
       userId,
       'laundry',

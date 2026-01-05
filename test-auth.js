@@ -11,13 +11,11 @@ const supabase = createClient(
 async function testAuth() {
   console.log('\nTesting Supabase Authentication (via Wijak\'s Supabase)\n');
 
-  // Login dengan user yang register via Accommodation Service Wijak
   console.log('Logging in...');
   console.log('NOTE: User harus sudah register via Accommodation Service\n');
   
-  // GANTI INI dengan credentials user yang sudah register di service Wijak!
-  const EMAIL = 'allodyaq@gmail.com';     // ← GANTI
-  const PASSWORD = 'Allodya_270';   // ← GANTI
+  const EMAIL = 'allodyaq@gmail.com';    
+  const PASSWORD = 'Allodya_270';   
   
   const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
     email: EMAIL,
@@ -25,8 +23,8 @@ async function testAuth() {
   });
 
   if (signInError) {
-    console.error('❌ Login failed:', signInError.message);
-    console.log('\n💡 Tips:');
+    console.error('Login failed:', signInError.message);
+    console.log('\nTips:');
     console.log('   1. Pastikan user sudah register via Accommodation Service teman');
     console.log('   2. Tanya teman credentials test user yang bisa dipakai');
     console.log('   3. Update EMAIL dan PASSWORD di test-auth.js');
@@ -41,12 +39,9 @@ async function testAuth() {
   console.log(signInData.session.access_token);
   console.log('\nExpires in:', signInData.session.expires_in, 'seconds');
 
-  // 3. Test API calls
   const token = signInData.session.access_token;
   
   console.log('\nTesting Living Support API...\n');
-  
-  // Test notifications
   console.log('Testing GET /api/notifications...');
   const notifResponse = await fetch('http://localhost:3002/api/notifications', {
     headers: {
@@ -56,7 +51,6 @@ async function testAuth() {
   const notifData = await notifResponse.json();
   console.log('Response:', notifResponse.status, notifData);
 
-  // Test catering menu
   console.log('\nTesting GET /api/catering/menu...');
   const menuResponse = await fetch('http://localhost:3002/api/catering/menu', {
     headers: {

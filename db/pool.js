@@ -3,7 +3,6 @@ import { config } from '../env.js';
 
 const { Pool } = pkg;
 
-// Support both direct connection and connection string (Supabase)
 const pool = new Pool(
   typeof config.db === 'object' && config.db.connectionString
     ? config.db

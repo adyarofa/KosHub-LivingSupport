@@ -1,6 +1,3 @@
--- KosHub Living Support Database Schema
-
--- Laundry Services Table
 CREATE TABLE IF NOT EXISTS laundry_services (
     id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL,
@@ -18,7 +15,6 @@ CREATE TABLE IF NOT EXISTS laundry_services (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Catering Orders Table
 CREATE TABLE IF NOT EXISTS catering_orders (
     id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL,
@@ -36,7 +32,6 @@ CREATE TABLE IF NOT EXISTS catering_orders (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Notifications Table
 CREATE TABLE IF NOT EXISTS notifications (
     id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL,
@@ -49,7 +44,6 @@ CREATE TABLE IF NOT EXISTS notifications (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create indexes for better performance
 CREATE INDEX idx_laundry_user_id ON laundry_services(user_id);
 CREATE INDEX idx_laundry_booking_id ON laundry_services(booking_id);
 CREATE INDEX idx_laundry_status ON laundry_services(status);
@@ -59,7 +53,6 @@ CREATE INDEX idx_catering_status ON catering_orders(status);
 CREATE INDEX idx_notifications_user_id ON notifications(user_id);
 CREATE INDEX idx_notifications_read ON notifications(is_read);
 
--- Create updated_at trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
