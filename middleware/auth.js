@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { createClient } from '@supabase/supabase-js';
 import pool from '../db/pool.js';
 import { config } from '../env.js';
@@ -55,39 +56,39 @@ export const checkActiveBooking = async (req, res, next) => {
         `${config.accommodationServiceUrl}/bookings/active/${userId}`,
         {
           headers: { 'Authorization': token },
-          timeout: 3000 // 3 second timeout
+          timeout: 5000
         }
       );
 
       if (response.data && response.data.length > 0) {
+        console.log(response.data)
         req.activeBooking = response.data[0];
+        console.log(req.activeBooking)
         return next();
       }
     } catch (apiError) {
-      console.log('⚠️  Accommodation service not available, checking database directly...');
-    }
-
-    // OPTION 2: Direct database query (shared Supabase)
-    // Query bookings table dari Supabase yang sama
-    const result = await pool.query(
-      `SELECT b.*, a.address, a.name as accommodation_name
-       FROM bookings b
-       LEFT JOIN accommodations a ON b.accommodation_id = a.accommodation_id
-       WHERE b.user_id = $1 
-         AND b.status = 'SUCCESS' 
-         AND CURRENT_DATE BETWEEN b.start_date AND b.end_date
-       LIMIT 1`,
-      [userId]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(403).json({ 
-        error: 'No active booking found. You need an active accommodation booking to use living support services.' 
+      console.error('Accommodation API call failed:', {
+        message: apiError.message,
+        code: apiError.code,
+        stack: apiError.stack,
+        response: apiError.response ? {
+          status: apiError.response.status,
+          data: apiError.response.data
+        } : undefined,
+        request: apiError.request ? {
+          path: apiError.request.path,
+          method: apiError.request.method,
+          headers: apiError.request.headers
+        } : undefined
       });
+      if (apiError.response) {
+        console.error('Accommodation API error response:', apiError.response.data);
+      }
+      if (apiError.request) {
+        console.error('Accommodation API request info:', apiError.request);
+      }
+      console.error('Accommodation API not reachable, falling back to direct DB query.');
     }
-
-    // simpan booking info ke request untuk digunakan di route
-    req.activeBooking = result.rows[0];
     next();
   } catch (error) {
     console.error('Error checking active booking:', error.message);

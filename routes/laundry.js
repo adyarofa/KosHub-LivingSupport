@@ -53,10 +53,9 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const userId = req.user.id;
-    const bookingId = req.activeBooking.id;
-    const { service_type, weight, pickup_date, pickup_time, notes } = req.body;
-
-    // Validation
+    const { service_type, weight,  pickup_date, pickup_time,  notes, booking_id } = req.body;
+    console.log('Isinya ini', req.body);
+    console.log('Booking ID:', booking_id);
     if (!service_type || !weight || !pickup_date || !pickup_time) {
       return res.status(400).json({ 
         error: 'Missing required fields: service_type, weight, pickup_date, pickup_time' 
@@ -81,7 +80,7 @@ router.post('/', async (req, res) => {
        (user_id, booking_id, service_type, weight, pickup_date, pickup_time, total_price, notes, status) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
        RETURNING *`,
-      [userId, bookingId, service_type, weight, pickup_date, pickup_time, total_price, notes, 'pending']
+      [userId, booking_id, service_type, weight, pickup_date, pickup_time, total_price, notes, 'pending']
     );
 
     const laundryService = result.rows[0];

@@ -70,7 +70,6 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const userId = req.user.id;
-    const bookingId = req.activeBooking.id;
     const { 
       meal_type, 
       menu_name, 
@@ -78,7 +77,8 @@ router.post('/', async (req, res) => {
       delivery_date, 
       delivery_time,
       delivery_address,
-      special_requests 
+      special_requests,
+      booking_id
     } = req.body;
 
     if (!meal_type || !menu_name || !quantity || !delivery_date || !delivery_time) {
@@ -115,7 +115,7 @@ router.post('/', async (req, res) => {
         total_price, delivery_address, special_requests, status) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
        RETURNING *`,
-      [userId, bookingId, meal_type, menu_name, quantity, delivery_date, delivery_time, 
+      [userId, booking_id, meal_type, menu_name, quantity, delivery_date, delivery_time, 
        total_price, finalDeliveryAddress, special_requests, 'pending']
     );
 
