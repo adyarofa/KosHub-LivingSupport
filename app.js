@@ -5,6 +5,7 @@ import laundryRoutes from './routes/laundry.js';
 import cateringRoutes from './routes/catering.js';
 import notificationRoutes from './routes/notifications.js';
 import { authenticateToken, authenticateAndCheckBooking } from './middleware/auth.js';
+import { CATERING_MENU } from './routes/catering.js';
 import { config } from './env.js';
 
 const app = express();
@@ -46,10 +47,25 @@ app.use('/auth', authRoutes);
 // Protected routes - require authentication only
 app.use('/api/notifications', authenticateToken, notificationRoutes);
 
+// Public menu endpoint hanya perlu auth, tidak perlu active booking
+app.get('/api/catering/menu', authenticateToken, (req, res) => {
+  try {
+    res.json({
+      message: 'Available catering menu',
+      menu: CATERING_MENU
+    });
+  } catch (error) {
+    console.error('Error fetching menu:', error);
+    res.status(500).json({ error: 'Failed to fetch menu' });
+  }
+});
+
+// Protected routes - require authentication only
+app.use('/api/notifications', authenticateToken, notificationRoutes);
+
 // Protected routes - require authentication AND active booking
 app.use('/api/laundry', authenticateAndCheckBooking, laundryRoutes);
 app.use('/api/catering', authenticateAndCheckBooking, cateringRoutes);
-
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });

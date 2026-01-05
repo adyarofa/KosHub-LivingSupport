@@ -4,8 +4,7 @@ import { createNotification } from '../services/notifications.js';
 
 const router = express.Router();
 
-// Sample menu with prices (dalam Rupiah)
-const CATERING_MENU = {
+export const CATERING_MENU = {
   breakfast: [
     { name: 'Nasi Goreng + Telur', price: 15000 },
     { name: 'Bubur Ayam', price: 12000 },
@@ -32,19 +31,6 @@ const CATERING_MENU = {
   ]
 };
 
-// GET /catering/menu - Get available catering menu
-router.get('/menu', async (req, res) => {
-  try {
-    res.json({
-      message: 'Available catering menu',
-      menu: CATERING_MENU
-    });
-  } catch (error) {
-    console.error('Error fetching menu:', error);
-    res.status(500).json({ error: 'Failed to fetch menu' });
-  }
-});
-
 // GET /catering - Get all catering orders for logged in user
 router.get('/', async (req, res) => {
   try {
@@ -60,7 +46,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /catering/:id - Get specific catering order
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -82,7 +67,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /catering - Create new catering order
 router.post('/', async (req, res) => {
   try {
     const userId = req.user.id;
@@ -97,7 +81,6 @@ router.post('/', async (req, res) => {
       special_requests 
     } = req.body;
 
-    // Validation
     if (!meal_type || !menu_name || !quantity || !delivery_date || !delivery_time) {
       return res.status(400).json({ 
         error: 'Missing required fields: meal_type, menu_name, quantity, delivery_date, delivery_time' 
@@ -115,7 +98,6 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Quantity must be greater than 0' });
     }
 
-    // Find menu item and calculate price
     const menuItem = CATERING_MENU[meal_type]?.find(item => item.name === menu_name);
     if (!menuItem) {
       return res.status(400).json({ 
@@ -125,7 +107,6 @@ router.post('/', async (req, res) => {
 
     const total_price = menuItem.price * quantity;
 
-    // Use booking address as default delivery address
     const finalDeliveryAddress = delivery_address || req.activeBooking.accommodation_address || 'Room address';
 
     const result = await pool.query(
@@ -140,7 +121,6 @@ router.post('/', async (req, res) => {
 
     const cateringOrder = result.rows[0];
 
-    // Create notification
     await createNotification(
       userId,
       'catering',
@@ -157,14 +137,12 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT /catering/:id - Update catering order
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
     const { quantity, delivery_date, delivery_time, delivery_address, special_requests } = req.body;
 
-    // Check if order exists and belongs to user
     const checkResult = await pool.query(
       'SELECT * FROM catering_orders WHERE id = $1 AND user_id = $2',
       [id, userId]
@@ -176,14 +154,12 @@ router.put('/:id', async (req, res) => {
 
     const currentOrder = checkResult.rows[0];
 
-    // Only allow updates if status is pending
     if (currentOrder.status !== 'pending') {
       return res.status(400).json({ 
         error: 'Can only update catering order with pending status' 
       });
     }
 
-    // Recalculate price if quantity changed
     let updateQuery = `UPDATE catering_orders SET `;
     let updateParams = [];
     let paramCount = 1;
@@ -223,14 +199,12 @@ router.put('/:id', async (req, res) => {
       paramCount++;
     }
 
-    // Remove trailing comma and space
     updateQuery = updateQuery.slice(0, -2);
     updateQuery += ` WHERE id = $${paramCount} AND user_id = $${paramCount + 1} RETURNING *`;
     updateParams.push(id, userId);
 
     const result = await pool.query(updateQuery, updateParams);
 
-    // Create notification
     await createNotification(
       userId,
       'catering',
@@ -247,7 +221,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// PUT /catering/:id/status - Update catering status
 router.put('/:id/status', async (req, res) => {
   try {
     const { id } = req.params;
@@ -268,7 +241,6 @@ router.put('/:id/status', async (req, res) => {
       return res.status(404).json({ error: 'Catering order not found' });
     }
 
-    // Create notification based on status
     const statusMessages = {
       confirmed: 'Your catering order has been confirmed',
       preparing: 'Your food is being prepared',
