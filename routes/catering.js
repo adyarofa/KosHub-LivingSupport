@@ -106,8 +106,6 @@ router.post('/', async (req, res) => {
 
     const total_price = menuItem.price * quantity;
 
-    const finalDeliveryAddress = delivery_address || req.activeBooking.accommodation_address || 'Room address';
-
     const result = await pool.query(
       `INSERT INTO catering_orders 
        (user_id, booking_id, meal_type, menu_name, quantity, delivery_date, delivery_time, 
@@ -115,7 +113,7 @@ router.post('/', async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) 
        RETURNING *`,
       [userId, booking_id, meal_type, menu_name, quantity, delivery_date, delivery_time, 
-       total_price, finalDeliveryAddress, special_requests, 'pending']
+       total_price, delivery_address, special_requests, 'pending']
     );
 
     const cateringOrder = result.rows[0];
