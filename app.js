@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import authRoutes from './routes/auth.js';
+import authenticateRoutes from './routes/authenticate.js';
 import laundryRoutes from './routes/laundry.js';
 import cateringRoutes from './routes/catering.js';
 import notificationRoutes from './routes/notifications.js';
@@ -15,8 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     service: 'KosHub Living Support Service',
     timestamp: new Date().toISOString()
   });
@@ -38,8 +38,7 @@ app.get('/', (req, res) => {
   });
 });
 
-app.use('/auth', authRoutes);
-app.use('/api/notifications', authenticateToken, notificationRoutes);
+app.use('/auth', authenticateRoutes);
 app.get('/api/catering/menu', authenticateToken, (req, res) => {
   try {
     res.json({
@@ -53,8 +52,8 @@ app.get('/api/catering/menu', authenticateToken, (req, res) => {
 });
 
 app.use('/api/notifications', authenticateToken, notificationRoutes);
-app.use('/api/laundry', authenticateAndCheckBooking, laundryRoutes);
-app.use('/api/catering', authenticateAndCheckBooking, cateringRoutes);
+app.use('/api/laundry', authenticateToken, laundryRoutes);
+app.use('/api/catering', authenticateToken, cateringRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });
@@ -63,9 +62,9 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
-  res.status(500).json({ 
+  res.status(500).json({
     error: 'Internal server error',
-    message: err.message 
+    message: err.message
   });
 });
 

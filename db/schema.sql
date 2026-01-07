@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS laundry_services (
     id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL,
-    booking_id INTEGER NOT NULL,
+    booking_id INTEGER,
     service_type VARCHAR(50) NOT NULL CHECK (service_type IN ('wash', 'wash_iron', 'dry_clean', 'iron_only')),
     weight DECIMAL(5,2) NOT NULL,
     pickup_date DATE NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS laundry_services (
 CREATE TABLE IF NOT EXISTS catering_orders (
     id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL,
-    booking_id INTEGER NOT NULL,
+    booking_id INTEGER,
     meal_type VARCHAR(20) NOT NULL CHECK (meal_type IN ('breakfast', 'lunch', 'dinner', 'snack')),
     menu_name VARCHAR(100) NOT NULL,
     quantity INTEGER NOT NULL DEFAULT 1,
@@ -44,6 +44,15 @@ CREATE TABLE IF NOT EXISTS notifications (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS users (
+    id UUID PRIMARY KEY,  -- Sama dengan auth.users.id dari Supabase Auth
+    name VARCHAR(255),
+    membership_level VARCHAR(20) DEFAULT 'BASIC' CHECK (membership_level IN ('BASIC', 'SILVER', 'GOLD')),
+    discount_rate DECIMAL(3,2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX idx_laundry_user_id ON laundry_services(user_id);
 CREATE INDEX idx_laundry_booking_id ON laundry_services(booking_id);
 CREATE INDEX idx_laundry_status ON laundry_services(status);
@@ -52,6 +61,7 @@ CREATE INDEX idx_catering_booking_id ON catering_orders(booking_id);
 CREATE INDEX idx_catering_status ON catering_orders(status);
 CREATE INDEX idx_notifications_user_id ON notifications(user_id);
 CREATE INDEX idx_notifications_read ON notifications(is_read);
+CREATE INDEX idx_users_membership ON users(membership_level);
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -67,4 +77,7 @@ FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Apply trigger to catering_orders
 CREATE TRIGGER update_catering_updated_at BEFORE UPDATE ON catering_orders
+FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
 FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
