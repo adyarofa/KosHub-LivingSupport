@@ -76,6 +76,10 @@ ACCOMMODATION_SERVICE_URL=http://localhost:3000
 - title, message, notification_type
 - is_read, created_at
 
+### users
+- uuid, name, membership_level, discount_rate
+- created_at, updated_at
+
 ## Docker Deployment
 
 ```bash
@@ -89,29 +93,9 @@ docker-compose logs -f
 docker-compose down
 ```
 
-## Testing
-
-```bash
-# Register user (via Accommodation Service)
-curl -X POST http://localhost:3000/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email": "test@example.com", "password": "password123"}'
-
-# Create laundry request
-curl -X POST http://localhost:3002/api/laundry \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <token>" \
-  -d '{
-    "service_type": "wash_iron",
-    "weight": 5,
-    "pickup_date": "2026-01-10",
-    "pickup_time": "09:00:00"
-  }'
-```
-
 ## Integration
 
 Service ini terintegrasi dengan KosHub Accommodation untuk:
 - Validasi token JWT menggunakan Supabase Auth yang sama
 - Validasi active booking melalui API call atau direct database query
-- Single sign-on untuk kedua service
+- Single sign-on 
